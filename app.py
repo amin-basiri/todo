@@ -1,8 +1,9 @@
 import os
+from flask import Flask
 from importlib import import_module
 
 import config
-from flask import Flask
+import models # noqa
 
 apps = ['auth', 'todo']
 

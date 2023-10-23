@@ -5,10 +5,12 @@ from models.base import Base
 
 
 class User(Base):
+    __tablename__ = "auth_User"
+
     full_name = Column(String(100), nullable=False)
     username = Column(String(50), nullable=False, unique=True)
     password = Column(String(80), nullable=False)
 
-    def __int__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.password = generate_password_hash(self.password)

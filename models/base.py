@@ -5,8 +5,7 @@ from extensions import db
 
 
 class Base(db.Model):
-    def __tablename__(self):
-        return f"{__package__}_{self.__class__.__name__}"
+    __abstract__ = True
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     created = Column(TIMESTAMP, nullable=False, server_default=func.now())
