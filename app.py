@@ -1,36 +1,30 @@
 import os
 from importlib import import_module
 
-import todo
 import config
 from flask import Flask
 
 apps = ['auth', 'todo']
 
 
-def config_extensions(app: Flask):
+def config_extensions(application: Flask):
     import extensions
 
     for extension in extensions.__all__:
-        getattr(extensions, extension).init_app(app)
+        getattr(extensions, extension).init_app(application)
 
 
-def config_blueprints(app: Flask):
+def config_blueprints(application: Flask):
     for app_name in apps:
         bp = import_module(f"{app_name}.{app_name}")
-        app.register_blueprint(bp.bp)
+        application.register_blueprint(bp.bp)
 
 
-def create_app(config_obj):
-    app = Flask(__name__)
-    app.config.from_object(config_obj)
-    config_blueprints(app)
-    config_extensions(app)
-
-    return app
+def config_cli_commands(application: Flask):
+    pass
 
 
-if __name__ == '__main__':
+def get_configuration_object():
     env = os.getenv('FLASK_ENV') or 'production'
 
     if env == 'development':
@@ -38,5 +32,20 @@ if __name__ == '__main__':
     else:
         raise NotImplementedError()
 
-    flask_app = create_app(configuration)
-    flask_app.run()
+    return configuration
+
+
+def create_app():
+    config_obj = get_configuration_object()
+
+    application = Flask(__name__)
+    application.config.from_object(config_obj)
+    config_blueprints(application)
+    config_extensions(application)
+
+    return application
+
+
+if __name__ == '__main__':
+    app = create_app()
+    app.run()
