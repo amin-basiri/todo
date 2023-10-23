@@ -21,7 +21,10 @@ def config_blueprints(application: Flask):
 
 
 def config_cli_commands(application: Flask):
-    pass
+    import commands
+
+    for command in commands.__all__:
+        application.cli.add_command(getattr(commands, command))
 
 
 def get_configuration_object():
@@ -42,6 +45,7 @@ def create_app():
     application.config.from_object(config_obj)
     config_blueprints(application)
     config_extensions(application)
+    config_cli_commands(application)
 
     return application
 

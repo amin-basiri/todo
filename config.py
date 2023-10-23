@@ -3,4 +3,4 @@ class BaseConfig:
 
 
 class DevelopmentConfig(BaseConfig):
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:amin@123@localhost:5432/todo"
+    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:amin_123@localhost:5432/todo"
