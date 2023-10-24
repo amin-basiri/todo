@@ -16,12 +16,16 @@ class User(Base):
         super().__init__(*args, **kwargs)
         self.password = generate_password_hash(self.password)
 
+    def is_password_ok(self, password):
+        return check_password_hash(self.password, password)
+
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = User
-        fields = ("id", "username", "full_name", "password")
+        fields = ("username", "full_name", "password")
         load_instance = True
 
 
 sign_up_schema = UserSchema(load_only=["password", ])
+sign_in_schema = UserSchema(exclude=["full_name", ], load_instance=False)
