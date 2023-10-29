@@ -36,5 +36,6 @@ class TodoSchema(ma.SQLAlchemyAutoSchema):
         load_instance = True
 
 
-add_todo_schema = TodoSchema(load_only=["user_id"], dump_only=["is_done", "id"])
+todos_schema = TodoSchema(many=True, exclude=["user_id"])
 edit_todo_schema = TodoSchema(dump_only=["id", ], exclude=["user_id"])
+add_todo_schema = TodoSchema(load_only=["user_id"], dump_only=["is_done", "id"])

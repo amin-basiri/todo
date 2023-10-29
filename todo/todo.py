@@ -5,7 +5,7 @@ from flask import request, Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from extensions import db
-from models.todo import add_todo_schema, edit_todo_schema, Todo
+from models.todo import add_todo_schema, edit_todo_schema, todos_schema, Todo
 
 
 bp = Blueprint("todo", __name__, url_prefix='/todo')
@@ -29,7 +29,7 @@ def add_todo():
 @jwt_required()
 def edit_todo(todo_id: int):
 
-    todo = Todo.query.filter_by(id=todo_id).first()
+    todo = Todo.query.filter_by(id=todo_id, user_id=get_jwt_identity()).first()
     if not todo:
         return jsonify(msg="Todo not found"), 404
 
@@ -48,7 +48,7 @@ def edit_todo(todo_id: int):
 @bp.route("/<int:todo_id>", methods=["DELETE"])
 @jwt_required()
 def delete_todo(todo_id):
-    todo = Todo.query.filter_by(id=todo_id).first()
+    todo = Todo.query.filter_by(id=todo_id, user_id=get_jwt_identity()).first()
     if not todo:
         return jsonify(msg="Todo not found"), 404
 
@@ -56,3 +56,12 @@ def delete_todo(todo_id):
     db.session.commit()
 
     return jsonify(msg="Successfully deleted"), 202
+
+
+@bp.route("/", methods=["GET"])
+@jwt_required()
+def list_todo():
+
+    todo_list = Todo.query.filter_by(user_id=get_jwt_identity()).all()
+
+    return jsonify(todos_schema.dump(todo_list))
