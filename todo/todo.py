@@ -1,3 +1,5 @@
+import datetime
+
 from marshmallow import ValidationError
 from flask import request, Blueprint, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -41,3 +43,16 @@ def edit_todo(todo_id: int):
     db.session.commit()
 
     return edit_todo_schema.dump(todo), 202
+
+
+@bp.route("/<int:todo_id>", methods=["DELETE"])
+@jwt_required()
+def delete_todo(todo_id):
+    todo = Todo.query.filter_by(id=todo_id).first()
+    if not todo:
+        return jsonify(msg="Todo not found"), 404
+
+    todo.deleted = datetime.datetime.utcnow()
+    db.session.commit()
+
+    return jsonify(msg="Successfully deleted"), 202
